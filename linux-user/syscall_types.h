@@ -637,3 +637,57 @@ STRUCT(usbdevfs_disconnect_claim,
         TYPE_INT, /* flags */
         MK_ARRAY(TYPE_CHAR, USBDEVFS_MAXDRIVERNAME + 1)) /* driver */
 #endif /* CONFIG_USBFS */
+
+STRUCT(megasas_header,
+	TYPE_CHAR,	/*00h */
+	TYPE_CHAR,	/*01h */
+	TYPE_CHAR,	/*02h */
+	TYPE_CHAR,	/*03h */
+	TYPE_CHAR,	/*04h */
+	TYPE_CHAR,	/*05h */
+	TYPE_CHAR,	/*06h */
+	TYPE_CHAR,	/*07h */
+
+	TYPE_INT,	/*08h */
+	TYPE_INT,	/*0Ch */
+
+	TYPE_SHORT, 	/*10h */
+	TYPE_SHORT,		/*12h */
+	TYPE_INT	/*14h */
+)
+
+STRUCT(compat_iovec,
+        TYPE_INT,
+        TYPE_INT
+)
+
+STRUCT(megasas_iocpacket,
+	TYPE_SHORT,
+	TYPE_SHORT,
+
+	TYPE_INT,
+	TYPE_INT,
+	TYPE_INT,
+	TYPE_INT,
+        MK_ARRAY(TYPE_CHAR, 128),
+       MK_ARRAY(TYPE_INT, 32)
+)
+
+STRUCT(compat_megasas_iocpacket,
+	TYPE_SHORT,
+	TYPE_SHORT,
+
+	TYPE_INT,
+	TYPE_INT,
+	TYPE_INT,
+	TYPE_INT,
+        MK_ARRAY(TYPE_CHAR, 128),
+       MK_ARRAY(TYPE_INT, 32)
+)
+
+STRUCT(megasas_aen,
+	TYPE_SHORT,
+	TYPE_SHORT,
+	TYPE_INT,
+	TYPE_INT
+)

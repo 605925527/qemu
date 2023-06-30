@@ -5720,6 +5720,92 @@ static abi_long do_ioctl_TUNSETTXFILTER(const IOCTLEntry *ie, uint8_t *buf_temp,
     return get_errno(safe_ioctl(fd, ie->host_cmd, filter));
 }
 
+typedef unsigned char      u8;
+typedef unsigned short     u16;
+typedef unsigned int       u32;
+typedef unsigned long long u64;
+typedef unsigned long      ulong;
+typedef unsigned char      __u8;
+typedef unsigned short     __u16;
+typedef unsigned int       __u32;
+typedef unsigned long long __u64;
+
+
+#define MAX_MGMT_ADAPTERS		1024
+#define MAX_IOCTL_SGE			16
+
+struct megasas_header {
+
+	u8 cmd;			/*00h */
+	u8 sense_len;		/*01h */
+	u8 cmd_status;		/*02h */
+	u8 scsi_status;		/*03h */
+
+	u8 target_id;		/*04h */
+	u8 lun;			/*05h */
+	u8 cdb_len;		/*06h */
+	u8 sge_count;		/*07h */
+
+	__le32 context;		/*08h */
+	__le32 pad_0;		/*0Ch */
+
+	__le16 flags;		/*10h */
+	__le16 timeout;		/*12h */
+	__le32 data_xferlen;	/*14h */
+
+} __attribute__ ((packed));
+
+struct compat_iovec {
+        u32   iov_base;
+        u32   iov_len;
+};
+
+struct megasas_iocpacket {
+
+	u16 host_no;
+	u16 __pad1;
+	u32 sgl_off;
+	u32 sge_count;
+	u32 sense_off;
+	u32 sense_len;
+	union {
+		u8 raw[128];
+		struct megasas_header hdr;
+	} frame;
+
+	struct iovec sgl[MAX_IOCTL_SGE];
+
+} __attribute__ ((packed));
+
+struct compat_megasas_iocpacket {
+	u16 host_no;
+	u16 __pad1;
+	u32 sgl_off;
+	u32 sge_count;
+	u32 sense_off;
+	u32 sense_len;
+	union {
+		u8 raw[128];
+		struct megasas_header hdr;
+	} frame;
+	struct compat_iovec sgl[MAX_IOCTL_SGE];
+} __attribute__ ((packed));
+
+struct megasas_aen {
+	u16 host_no;
+	u16 __pad1;
+	u32 seq_num;
+	u32 class_locale_word;
+} __attribute__ ((packed));
+
+#define MEGASAS_IOC_FIRMWARE32		TARGET_IOWR('M', 1, struct compat_megasas_iocpacket)
+#define MEGASAS_IOC_FIRMWARE 		TARGET_IOWR('M', 1, struct megasas_iocpacket)
+#define MEGASAS_IOC_GET_AEN		TARGET_IOW('M', 3, struct megasas_aen)
+
+#define TARGET_MEGASAS_IOC_FIRMWARE32		TARGET_IOWR('M', 1, struct compat_megasas_iocpacket)
+#define TARGET_MEGASAS_IOC_FIRMWARE 		TARGET_IOWR('M', 1, struct megasas_iocpacket)
+#define TARGET_MEGASAS_IOC_GET_AEN		TARGET_IOW('M', 3, struct megasas_aen)
+
 IOCTLEntry ioctl_entries[] = {
 #define IOCTL(cmd, access, ...) \
     { TARGET_ ## cmd, cmd, #cmd, access, 0, {  __VA_ARGS__ } },
